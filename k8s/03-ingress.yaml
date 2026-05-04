@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pho-flask-psql-test
+  namespace: pho-flask-psql-test
+spec:
+  ingressClassName: nginx-externalssl
+  rules:
+    - host: pho-flask-psql-test.private.dev.k8s-small.seibert.tools
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: pho-flask-psql-test
+                port:
+                  number: 80

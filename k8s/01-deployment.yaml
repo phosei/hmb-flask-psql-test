@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pho-flask-psql-test
+  namespace: pho-flask-psql-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pho-flask-psql-test
+  template:
+    metadata:
+      labels:
+        app: pho-flask-psql-test
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pho-flask-psql-test
+          image: pho-flask-psql-test/pho-flask-psql-test:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: postgresql://hurz:hurz@postgres/hurz
+          securityContext:
+            runAsUser: 65534
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

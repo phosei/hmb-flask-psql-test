@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import date
 
 import psycopg2
@@ -14,17 +15,24 @@ def get_conn():
 
 
 def init_db():
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS entries (
-                    id   SERIAL PRIMARY KEY,
-                    day  DATE NOT NULL
-                )
-                """
-            )
-        conn.commit()
+    for attempt in range(10):
+        try:
+            with get_conn() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS entries (
+                            id   SERIAL PRIMARY KEY,
+                            day  DATE NOT NULL
+                        )
+                        """
+                    )
+                conn.commit()
+            return
+        except psycopg2.OperationalError:
+            if attempt == 9:
+                raise
+            time.sleep(3)
 
 
 @app.route("/hurz")
@@ -44,4 +52,4 @@ def hurz():
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=False)
