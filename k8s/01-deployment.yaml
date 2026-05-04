@@ -20,7 +20,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: pho-flask-psql-test
-          image: pho-flask-psql-test/pho-flask-psql-test:latest
+          image: europe-west3-docker.pkg.dev/gke-seibert-k8s-small/pho-flask-psql-test/pho-flask-psql-test:latest
           ports:
             - containerPort: 8080
           env:
